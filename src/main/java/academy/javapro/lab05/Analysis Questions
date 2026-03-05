@@ -1,0 +1,26 @@
+What's the difference between calling task.run() and new Thread(task).start()? Try both and observe what happens. Which one creates actual concurrency?
+    task.run() is a normal method call. It executes the logic on the current thread and is synchronous, meaning that the program waits for it to finish
+    before moving to the next line.
+    new Thread(task).start() tells the JVM to allocate a new entry in the OS's thread scheduler. It creates actual concurrency since it runs the run()
+    method on a completely separate execution path.
+Why do the threads finish in different orders each time you run option 2? What does this tell you about concurrent execution?
+    They finish in different orders because of the Thread Scheduler.
+    It shows that concurrent execution is non-deterministic. You can't rely on the timing or order of execution unless you use explicit synchronization.
+What would happen if you didn't call join() before accessing the results? Try removing the join() calls - what goes wrong?
+    The Results would print out as incomplete data.
+How does thread execution interleave? Notice how the console output from different threads mixes together. Is this random?
+    The OS scheduler rapidly switches the CPU between active threads. This creates the illusion of simultaneous progress. Technically, it is random to
+    humans, but it is actually determined by the scheduler's algorithm (which factors in priority and CPU load).
+Why do we need the Thread.sleep() calls in the calculations? What happens if you remove them? Does it affect correctness or just visibility?
+    It simulates "busy work" or computational load. Without it, modern CPUs would finish the math so fast that you wouldn't be able to observe the 
+    threads running at the same time.
+    If you remove it, the threads will likely finish one after the other almost instantly.
+    It affects just visibility.
+What happens to the calc object when you create the Runnable? How does the thread access the same CalculatorBase instance?
+    The Runnable captures a reference to the CalculatorBase object. Threads in Java share the same memory space. Since you pass the same reference to
+    the CalculatorBase object into the thread, both the worker thread and the main thread are looking at the exact same spot in memory. This allows the
+    worker thread to store the answer in calc.result and the main thread to read it after the join() call completes.
+Can you use a lambda expression instead of an anonymous class? Which style is more concise? Which is clearer?
+    You can use a lambda expression.
+    Lambda expressions are more concise because they remove the "boilerplate" code.
+    Lambdas are usually considered clearer for simpler tasks since they focus strictly on the logic being performed instead of the syntax of the interface.
